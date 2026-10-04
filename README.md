@@ -1,5 +1,15 @@
 # 📺 OLED2.42_EASY
 
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Arduino](https://img.shields.io/badge/Arduino-Nano%20%7C%20Uno%20%7C%20Pro%20Mini-teal)
+![Platform](https://img.shields.io/badge/platform-AVR-orange)
+![Status](https://img.shields.io/badge/status-stable-brightgreen)
+
+**Языки:** [Русский](README.md) · [中文](README_CN.md)
+
+---
+
 Простая библиотека для **OLED 2.42"** на контроллере **SSD1309** (I2C, ATmega328P).
 
 Прямая работа с регистрами **TWI**. Без внешних зависимостей.
