@@ -1,0 +1,70 @@
+##########################################################
+# OLED2.42_EASY
+##########################################################
+
+# Инициализация
+oledBegin	KEYWORD2
+oledBeginAddr	KEYWORD2
+
+# Управление дисплеем
+oledOn	KEYWORD2
+oledOff	KEYWORD2
+oledContrast	KEYWORD2
+oledInvert	KEYWORD2
+
+# Framebuffer
+oledClear	KEYWORD2
+oledClearPage	KEYWORD2
+oledShow	KEYWORD2
+oledShowPage	KEYWORD2
+
+# Графика
+oledPixel	KEYWORD2
+oledLine	KEYWORD2
+oledRect	KEYWORD2
+oledFillRect	KEYWORD2
+oledCircle	KEYWORD2
+oledFillCircle	KEYWORD2
+oledBitmap	KEYWORD2
+oledInvertRect	KEYWORD2
+
+# Текст
+oledText	KEYWORD2
+oledValue	KEYWORD2
+oledValueXY	KEYWORD2
+
+# Значения (pos)
+oledTemp	KEYWORD2
+oledHumid	KEYWORD2
+oledPressure	KEYWORD2
+oledVolt	KEYWORD2
+oledAmper	KEYWORD2
+oledTime	KEYWORD2
+oledDate	KEYWORD2
+
+# Значения (XY)
+oledTempXY	KEYWORD2
+oledHumidXY	KEYWORD2
+oledPressXY	KEYWORD2
+oledVoltXY	KEYWORD2
+oledAmperXY	KEYWORD2
+oledTimeXY	KEYWORD2
+oledDateXY	KEYWORD2
+
+# Полные функции
+oledTempFull	KEYWORD2
+oledHumidFull	KEYWORD2
+oledPressFull	KEYWORD2
+oledVoltFull	KEYWORD2
+oledAmperFull	KEYWORD2
+oledTimeFull	KEYWORD2
+oledDateFull	KEYWORD2
+
+# UPDATE-функции
+oledTempUpdate	KEYWORD2
+oledHumidUpdate	KEYWORD2
+oledPressUpdate	KEYWORD2
+oledVoltUpdate	KEYWORD2
+oledAmperUpdate	KEYWORD2
+oledTimeUpdate	KEYWORD2
+oledDateUpdate	KEYWORD2
