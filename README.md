@@ -1,6 +1,6 @@
 # 📺 OLED2.42_EASY
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/klenov1900-lang/OLED2.42_EASY/releases)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue)](https://github.com/klenov1900-lang/OLED2.42_EASY/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Arduino](https://img.shields.io/badge/Arduino-Nano%20%7C%20Uno%20%7C%20Pro%20Mini-teal)](https://www.arduino.cc/)
 [![Platform](https://img.shields.io/badge/platform-AVR-orange)](https://www.microchip.com/en-us/products/microcontrollers-and-microprocessors/8-bit-mcus/avr-mcus)
