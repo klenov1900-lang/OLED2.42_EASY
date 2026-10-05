@@ -1,12 +1,13 @@
 # 📺 OLED2.42_EASY
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Arduino](https://img.shields.io/badge/Arduino-Nano%20%7C%20Uno%20%7C%20Pro%20Mini-teal)
-![Platform](https://img.shields.io/badge/platform-AVR-orange)
-![Status](https://img.shields.io/badge/status-stable-brightgreen)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/klenov1900-lang/OLED2.42_EASY/releases)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Arduino](https://img.shields.io/badge/Arduino-Nano%20%7C%20Uno%20%7C%20Pro%20Mini-teal)](https://www.arduino.cc/)
+[![Platform](https://img.shields.io/badge/platform-AVR-orange)](https://www.microchip.com/en-us/products/microcontrollers-and-microprocessors/8-bit-mcus/avr-mcus)
+[![Status](https://img.shields.io/badge/status-stable-brightgreen)](https://github.com/klenov1900-lang/OLED2.42_EASY)
+[![Library Manager](https://img.shields.io/badge/Arduino%20Library%20Manager-approved-blue)](https://www.arduino.cc/reference/en/libraries/)
 
-**Языки:** [Русский](README.md) · [中文](README_CN.md)
+**Языки:** Русский · [中文](README_CN.md)
 
 ---
 
@@ -16,27 +17,85 @@
 
 ---
 
+## 🖼️ Демонстрация
+
+Все примеры протестированы в симуляторе [Wokwi](https://wokwi.com/) и реальном "железе" **Arduino Nano** + **OLED 2.42"** на контроллере **SSD1309** , I2C.
+
+| Часы (`Clock_With_Labels`) | Датчики (`FullDemo`) | Шрифт Terminus (`Text_SmallFont`) |
+|:---:|:---:|:---:|
+| ![Clock With Labels](images/Clock_With_Labels.png) | ![Full Demo](images/Demo.png) | ![Text SmallFont](images/Text_SmallFont.png) |
+
+> 🧪 *Библиотека проверена в Wokwi на SSD1306 — команды совместимы с SSD1309, поэтому код работает без изменений на реальном "железе" **Arduino Nano** + **OLED 2.42"** на контроллере **SSD1309** , I2C.*
+
+---
+
 ## 📦 Установка
 
 ### 1️⃣ Через менеджер библиотек Arduino IDE (рекомендуется)
 
-1. Откройте Arduino IDE
-2. Перейдите в **Скетч → Подключить библиотеку → Управлять библиотеками...**
-3. В поиске введите `OLED2.42_EASY`
-4. Нажмите **Установить**
+1. Откройте Arduino IDE.
+2. Перейдите в **Скетч → Подключить библиотеку → Управлять библиотеками…**
+3. В поиске введите `OLED2.42_EASY`.
+4. Нажмите **Установить**.
 
-### 2️⃣ Вручную (через ZIP)
+> ⚠️ **Пользователям из России:** если менеджер библиотек выдаёт ошибку
+> `Возникла ошибка при загрузке https://downloads.arduino.cc/libraries/library_index.json`,
+> значит, сервер Arduino недоступен из вашей сети. Используйте **Способ 2 (вручную через ZIP)** —
+> он работает независимо от блокировок.
 
-1. Скачайте ZIP-архив с [последней версией](https://github.com/klenov1900-lang/OLED2.42_EASY/releases/latest)
-2. В Arduino IDE: **Скетч → Подключить библиотеку → Добавить .ZIP библиотеку...**
-3. Выберите скачанный архив
+---
+
+### 2️⃣ Вручную (через ZIP) — работает всегда
+
+1. Скачайте ZIP-архив с [последней версией](https://github.com/klenov1900-lang/OLED2.42_EASY/archive/refs/heads/main.zip).
+2. В Arduino IDE: **Скетч → Подключить библиотеку → Добавить .ZIP библиотеку…**
+3. Выберите скачанный архив.
+
+После этого библиотека появится в меню **Скетч → Подключить библиотеку → OLED2.42_EASY**.
+
+---
 
 ### 3️⃣ Через Git
+
+**Linux / macOS:**
 
 ```bash
 cd ~/Arduino/libraries/
 git clone https://github.com/klenov1900-lang/OLED2.42_EASY.git
 ```
+
+**Windows (PowerShell / CMD):**
+
+```powershell
+cd "$env:USERPROFILE\Documents\Arduino\libraries"
+git clone https://github.com/klenov1900-lang/OLED2.42_EASY.git
+```
+
+После клонирования **перезапустите Arduino IDE** — библиотека появится в меню
+**Скетч → Подключить библиотеку → OLED2.42_EASY**.
+
+> 💡 Для обновления до последней версии достаточно выполнить `git pull` в папке библиотеки.
+
+---
+
+### ✅ Как проверить, что всё установилось
+
+1. Откройте Arduino IDE.
+2. Перейдите в **Файл → Примеры → OLED2.42_EASY**.
+3. Должны быть видны три примера:
+   - `Clock_With_Labels`
+   - `FullDemo`
+   - `Text_SmallFont`
+4. Откройте любой из них и нажмите **Проверить/Компилировать**.
+5. Если компиляция прошла без ошибок — библиотека установлена корректно.
+
+---
+
+### 🧪 Симуляция без железа
+
+Если у вас нет физического дисплея, библиотеку можно проверить в онлайн-симуляторе
+[**Wokwi**](https://wokwi.com/) — поддерживается Arduino Nano + SSD1309 (I2C).
+Пример `Text_SmallFont` успешно работает в симуляторе.
 
 ---
 
@@ -48,7 +107,7 @@ git clone https://github.com/klenov1900-lang/OLED2.42_EASY.git
 | 💾 **Framebuffer** | 1024 байта (8 страниц по 128 байт) |
 | 🔤 **Terminus 8×12** | Кириллица + Unicode (227 символов) |
 | 🔢 **Blocky 15×23** | Цифры, знаки, `hPa`, `%`, `°C`, `U`, `A` |
-| 🌐 **Мультиязычность** | Заголовки: русский, English, 中文 |
+| 🌐 **Мультиязычность** | Заголовки (labels): русский, English, 中文 |
 | ⚡ **Частичное обновление** | `oledShowPage()` — только изменённые страницы |
 | 🎯 **`*Full` + `*Update`** | Координаты задаются один раз, обновление — без них |
 | ⏱️ **Timeout в TWI** | Не зависает при отвале дисплея |
@@ -70,7 +129,7 @@ git clone https://github.com/klenov1900-lang/OLED2.42_EASY.git
 
 ## 🚀 Быстрый старт
 
-```c
+```cpp
 #include <OLED2.42_EASY.h>
 
 void setup() {
@@ -109,7 +168,7 @@ void loop() {
 
 ### 1️⃣ Просто — фиксированные Y (`pos = 1/2`)
 
-```c
+```cpp
 oledTemp(23.5, 0, 1);   // Y = 8
 oledHumid(67, 0, 2);    // Y = 40
 oledShow();
@@ -122,7 +181,7 @@ oledShow();
 
 ### 2️⃣ Гибко — любая пиксельная Y
 
-```c
+```cpp
 oledTempXY(23.5, 0, 16);   // Y = 16
 oledHumidXY(67, 0, 40);    // Y = 40
 oledShow();
@@ -130,7 +189,7 @@ oledShow();
 
 ### 3️⃣ С заголовком — `*Full` запоминает координаты
 
-```c
+```cpp
 // Заголовок Y = 0, значение Y = 16, язык = 0 (рус)
 oledTempFull(23.5, 0, 0, 0, 16, 0);
 oledShow();
@@ -149,7 +208,7 @@ oledTempUpdate(23.6);
 | `1` | 🇬🇧 English |
 | `2` | 🇨🇳 中文 |
 
-```c
+```cpp
 oledTempFull(23.5, 0, 0, 0, 16, 0);   // русский
 oledTempFull(23.5, 0, 0, 0, 16, 1);   // English
 oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
@@ -287,6 +346,10 @@ OLED2.42_EASY/
 │   ├── Clock_With_Labels/
 │   ├── FullDemo/
 │   └── Text_SmallFont/
+├── images/
+│   ├── Clock_With_Labels.png
+│   ├── Demo.png
+│   └── Text_SmallFont.png
 ├── library.properties
 ├── keywords.txt
 ├── README.md
@@ -317,4 +380,4 @@ OLED2.42_EASY/
 
 **Автор:** Dimitar Zhekov
 **Лицензия:** SIL Open Font License 1.1
-**Источник:** [files.ax86.net/terminus-ttf](https://files.ax86.net/terminus-ttf/)
+**Источник:** files.ax86.net/terminus-ttf
