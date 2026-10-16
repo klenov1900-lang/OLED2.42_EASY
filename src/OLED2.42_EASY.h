@@ -1,6 +1,7 @@
 // ============================================================
 // OLED2.42_EASY.h
 // Библиотека для OLED 2.42" на SSD1309 (I2C, ATmega328P)
+// Использует I2C_EASY как низкоуровневый слой TWI.
 // ============================================================
 #ifndef OLED2_42_EASY_H
 #define OLED2_42_EASY_H
@@ -9,8 +10,9 @@
 #include <avr/pgmspace.h>
 #include <string.h>
 
+#include "I2C_EASY.h"
 #include "fonts.h"
-#include "labels.h"  
+#include "labels.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,12 +24,13 @@ extern "C" {
 #define O242_WIDTH       128
 #define O242_HEIGHT      64
 #define O242_ADDR        0x3C
-#define O242_TWI_FREQ    400000UL
+#define O242_TWI_FREQ    I2C_EASY_FREQ   // частота берётся из I2C_EASY
 
 // ============================================================
 // ИНИЦИАЛИЗАЦИЯ
 // ============================================================
-void o242_twi_init(void);
+// o242_init() сам вызывает i2c_init(O242_TWI_FREQ),
+// поэтому отдельный o242_twi_init() больше не нужен.
 void o242_init(void);
 void o242_init_addr(uint8_t addr);
 
