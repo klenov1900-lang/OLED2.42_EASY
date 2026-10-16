@@ -1,11 +1,11 @@
 // ============================================================
 // OLED2.42_EASY.cpp
-// Реализация библиотеки. Прямая работа с TWI на ATmega328P.
+// Реализация библиотеки. TWI через I2C_EASY.
 // ============================================================
 #include "OLED2.42_EASY.h"
+#include "I2C_EASY.h"
 #include "fonts.h"
 #include "labels.h"
-#include <util/twi.h>
 #include <util/delay.h>
 #include <string.h>
 #include <stdlib.h>
@@ -51,64 +51,13 @@ static const uint8_t* o242_select_header(const uint8_t* ru, const uint8_t* en, c
 }
 
 // ============================================================
-// НИЗКОУРОВНЕВЫЙ TWI (с timeout)
+// НИЗКОУРОВНЕВЫЕ ОПЕРАЦИИ (через I2C_EASY)
 // ============================================================
-void o242_twi_init(void) {
-    DDRC |= (1 << PC5); DDRC &= ~(1 << PC4); PORTC |= (1 << PC4);
-    for (int i = 0; i < 9; i++) {
-        PORTC |= (1 << PC5); _delay_us(5);
-        PORTC &= ~(1 << PC5); _delay_us(5);
-    }
-    DDRC |= (1 << PC4); PORTC &= ~(1 << PC4); _delay_us(5);
-    PORTC |= (1 << PC5); _delay_us(5); PORTC |= (1 << PC4); _delay_us(5);
-    DDRC &= ~((1 << PC4) | (1 << PC5)); PORTC |= ((1 << PC4) | (1 << PC5));
-    TWBR = ((F_CPU / O242_TWI_FREQ) - 16) / 2;
-    TWSR = 0;
-    TWCR = (1 << TWEN);
-    _delay_ms(1);
-}
-
-// Таймаут для TWI (≈ 310 мкс при 16 МГц)
-#define O242_TWI_TIMEOUT  5000
-
-// Ожидание завершения операции TWI
-// Возвращает 1 = ок, 0 = таймаут
-static inline uint8_t o242_twi_wait(void) {
-    uint16_t timeout = O242_TWI_TIMEOUT;
-    while (!(TWCR & (1<<TWINT))) {
-        if (--timeout == 0) return 0;
-    }
-    return 1;
-}
-
-// STOP-условие на шине
-static inline void o242_twi_stop(void) {
-    TWCR = (1<<TWINT)|(1<<TWSTO)|(1<<TWEN);
-    _delay_us(10);
-}
-
+// Отправка одной команды SSD1309:
+//   START, addr+W, 0x00 (Co=0, D/C#=0), cmd, STOP
 static void o242_cmd(uint8_t c) {
-    // START
-    TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN);
-    if (!o242_twi_wait()) return;
-
-    // Адрес + запись
-    TWDR = (o242_address << 1);
-    TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA);
-    if (!o242_twi_wait()) { o242_twi_stop(); return; }
-
-    // Байт 0x00 (Command mode)
-    TWDR = 0x00;
-    TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA);
-    if (!o242_twi_wait()) { o242_twi_stop(); return; }
-
-    // Байт команды
-    TWDR = c;
-    TWCR = (1<<TWINT)|(1<<TWEN);
-    if (!o242_twi_wait()) { o242_twi_stop(); return; }
-
-    // STOP
-    o242_twi_stop();
+    uint8_t buf[2] = { 0x00, c };          // 0x00 — command mode
+    i2c_write(o242_address, buf, 2);
 }
 
 static void o242_set_cursor(uint8_t x, uint8_t page) {
@@ -121,14 +70,17 @@ static void o242_set_cursor(uint8_t x, uint8_t page) {
 // ИНИЦИАЛИЗАЦИЯ SSD1309
 // ============================================================
 void o242_init(void) {
-    o242_twi_init();
+    // Инициализация шины (одна на всё приложение)
+    i2c_init(O242_TWI_FREQ);
+
     _delay_ms(100);
+
     o242_cmd(0xAE); o242_cmd(0xD5); o242_cmd(0x80);
     o242_cmd(0xA8); o242_cmd(0x3F);
     o242_cmd(0xD3); o242_cmd(0x00);
     o242_cmd(0x40);
-    o242_cmd(0x8D); o242_cmd(0x14);
-    o242_cmd(0x20); o242_cmd(0x02);
+    o242_cmd(0x8D); o242_cmd(0x14);   // charge pump (для модулей с DC-DC безопасно)
+    o242_cmd(0x20); o242_cmd(0x02);   // Page Addressing Mode
     o242_cmd(0xA1); o242_cmd(0xC8);
     o242_cmd(0xDA); o242_cmd(0x12);
     o242_cmd(0x81); o242_cmd(0xCF);
@@ -154,39 +106,21 @@ void o242_fb_clear_page(uint8_t page) {
     memset(&o242_framebuffer[page * O242_WIDTH], 0, O242_WIDTH);
 }
 
-void o242_fb_flush(void) { for (uint8_t p = 0; p < 8; p++) o242_fb_flush_page(p); }
+void o242_fb_flush(void) {
+    for (uint8_t p = 0; p < 8; p++) o242_fb_flush_page(p);
+}
 
 void o242_fb_flush_page(uint8_t page) {
     if (page > 7) return;
+
     o242_set_cursor(0, page);
 
-    // START
-    TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN);
-    if (!o242_twi_wait()) return;
-
-    // Адрес + запись
-    TWDR = (o242_address << 1);
-    TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA);
-    if (!o242_twi_wait()) { o242_twi_stop(); return; }
-
-    // Data mode
-    TWDR = 0x40;
-    TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA);
-    if (!o242_twi_wait()) { o242_twi_stop(); return; }
-
-    // Данные страницы
-    for (uint8_t col = 0; col < O242_WIDTH; col++) {
-        TWDR = o242_framebuffer[page * O242_WIDTH + col];
-        if (col < O242_WIDTH - 1) {
-            TWCR = (1<<TWINT)|(1<<TWEN)|(1<<TWEA);
-        } else {
-            TWCR = (1<<TWINT)|(1<<TWEN);
-        }
-        if (!o242_twi_wait()) { o242_twi_stop(); return; }
-    }
-
-    // STOP
-    o242_twi_stop();
+    // Data mode: 0x40, затем 128 байт
+    // Через I2C_EASY — буфер 129 байт, один вызов i2c_write.
+    static uint8_t buf[O242_WIDTH + 1];
+    buf[0] = 0x40;
+    memcpy(&buf[1], &o242_framebuffer[page * O242_WIDTH], O242_WIDTH);
+    i2c_write(o242_address, buf, O242_WIDTH + 1);
 }
 
 // ============================================================
@@ -268,11 +202,6 @@ void o242_invert_rect(int16_t x, int16_t y, int16_t w, int16_t h) {
 // ============================================================
 void o242_set_font(const o242_font_t* font) { o242_current_font = font; }
 
-// ============================================================
-// БИНАРНЫЙ ПОИСК В UNICODE-ТАБЛИЦЕ
-// ВНИМАНИЕ: функция работает только с o242_terminus_table.
-// При добавлении второго Unicode-шрифта — переделать на поиск по uf->table.
-// ============================================================
 static const o242_unicode_entry_t* o242_unicode_find(uint16_t code) {
     uint16_t lo = 0;
     uint16_t hi = o242_terminus_count - 1;
@@ -677,7 +606,6 @@ void oledDateXY(uint8_t dd, uint8_t mm, uint8_t yy, int16_t x, int16_t y) {
 // ============================================================
 // ПОЛНЫЕ ФУНКЦИИ — заголовок + значение (запоминают координаты)
 // ============================================================
-
 void oledTempFull(float temp, int16_t hx, int16_t hy, int16_t vx, int16_t vy, uint8_t lang) {
     oledBitmap(o242_select_header(epd_bitmap_temp_ru, epd_bitmap_temp_en, epd_bitmap_temp_cn, lang), hx, hy, 128, 16);
 
