@@ -1,19 +1,15 @@
 # 📺 OLED2.42_EASY
 
-[![Version](https://img.shields.io/badge/version-1.0.1-blue)](https://github.com/klenov1900-lang/OLED2.42_EASY/releases)
+**Языки:** Русский · [中文](README_CN.md)
+
+[![Version](https://img.shields.io/badge/version-2.0.0-blue)](https://github.com/klenov1900-lang/OLED2.42_EASY/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Arduino](https://img.shields.io/badge/Arduino-Nano%20%7C%20Uno%20%7C%20Pro%20Mini-teal)](https://www.arduino.cc/)
-[![Platform](https://img.shields.io/badge/platform-AVR-orange)](https://www.microchip.com/en-us/products/microcontrollers-and-microprocessors/8-bit-mcus/avr-mcus)
+[![Platform](https://img.shields.io/badge/platform-AVR-orange)](https://www.microchip.com/)
 [![Status](https://img.shields.io/badge/status-stable-brightgreen)](https://github.com/klenov1900-lang/OLED2.42_EASY)
 [![Library Manager](https://img.shields.io/badge/Arduino%20Library%20Manager-approved-blue)](https://www.arduino.cc/reference/en/libraries/)
 
-**Языки:** Русский · [中文](README_CN.md)
-
----
-
-Простая библиотека для **OLED 2.42"** на контроллере **SSD1309** (I2C, ATmega328P).
-
-Прямая работа с регистрами **TWI**. Без внешних зависимостей.
+Простая библиотека для OLED **2.42"** на контроллере **SSD1309** (I2C, ATmega328P). Использует `I2C_EASY` как низкоуровневый слой TWI. **Без `Wire.h`.** Часть семейства **`*_EASY`**.
 
 ---
 
@@ -28,204 +24,121 @@
 > 🧪 *Библиотека проверена в Wokwi на SSD1306 — команды совместимы с SSD1309, поэтому код работает без изменений на реальном "железе" **Arduino Nano** + **OLED 2.42"** на контроллере **SSD1309** , I2C.*
 
 ---
+## ✨ Особенности
+
+- ✅ **Использует `I2C_EASY`** — без `Wire.h`
+- ✅ **Прямая работа с TWI** — только регистры ATmega328P
+- ✅ **Framebuffer** — 1024 байта (8 страниц по 128 байт)
+- ✅ **Terminus 8×12** — кириллица + Unicode (227 символов)
+- ✅ **Blocky 15×23** — крупные цифры, знаки
+- ✅ **Мультиязычные заголовки** — русский, English, 中文
+- ✅ **Частичное обновление** — `oledShowPage()` — только изменённые страницы
+- ✅ **`*Full` + `*Update`** — координаты задаются один раз
+- ✅ **Timeout в TWI** — не зависает при отвале дисплея
+
+## 🏗️ Архитектура
+
+```
+OLED2.42_EASY
+    ↓
+I2C_EASY          ← низкоуровневый слой TWI
+    ↓
+ATmega328P TWI
+```
+
+**Как это работает:**
+- `OLED2.42_EASY` формирует команды и данные для SSD1309.
+- `I2C_EASY` — передаёт их по шине I2C.
+- **Прямая работа с регистрами TWI** — без `Wire.h`.
+
+**Преимущества:**
+- ✅ Единый TWI-слой для всего семейства `*_EASY`.
+- ✅ Нет конфликтов с `DS3231_EASY`, `PCFKeypad_EASY` и др.
+- ✅ Timeout + диагностика — от `I2C_EASY`.
+- ✅ Минимум кода — только логика SSD1309.
+
+## ⚙️ Требования и совместимость
+
+- **Микроконтроллер:** ATmega328P (8-битный AVR).
+- **Платы:** Arduino Uno, Nano, Pro Mini.
+- **Дисплей:** OLED 2.42" на контроллере SSD1309.
+- **Интерфейс:** I2C (адрес 0x3C по умолчанию).
+- **Зависимости:** [`I2C_EASY`](https://github.com/klenov1900-lang/I2C_EASY).
+- **Другие платформы:** ESP8266, ESP32, STM32 — **не поддерживаются**.
 
 ## 📦 Установка
 
-### 1️⃣ Через менеджер библиотек Arduino IDE (рекомендуется)
+### Способ 1: Через менеджер библиотек Arduino IDE
 
-1. Откройте Arduino IDE.
+1. Откройте Arduino IDE
 2. Перейдите в **Скетч → Подключить библиотеку → Управлять библиотеками…**
-3. В поиске введите `OLED2.42_EASY`.
-4. Нажмите **Установить**.
+3. В поиске введите `OLED2.42_EASY`
+4. Нажмите **Установить**
 
-> ⚠️ **Пользователям из России:** если менеджер библиотек выдаёт ошибку
-> `Возникла ошибка при загрузке https://downloads.arduino.cc/libraries/library_index.json`,
-> значит, сервер Arduino недоступен из вашей сети. Используйте **Способ 2 (вручную через ZIP)** —
-> он работает независимо от блокировок.
+> **Примечание:** `I2C_EASY` установится автоматически как зависимость.
 
----
+### Способ 2: Вручную (через ZIP)
 
-### 2️⃣ Вручную (через ZIP) — работает всегда
+1. Скачайте ZIP-архив с [последней версией](https://github.com/klenov1900-lang/OLED2.42_EASY/archive/refs/heads/main.zip)
+2. Arduino IDE: **Скетч → Подключить библиотеку → Добавить .ZIP библиотеку…**
+3. Выберите скачанный архив
 
-1. Скачайте ZIP-архив с [последней версией](https://github.com/klenov1900-lang/OLED2.42_EASY/archive/refs/heads/main.zip).
-2. В Arduino IDE: **Скетч → Подключить библиотеку → Добавить .ZIP библиотеку…**
-3. Выберите скачанный архив.
+> **Примечание:** для работы потребуется также установить [`I2C_EASY`](https://github.com/klenov1900-lang/I2C_EASY).
 
-После этого библиотека появится в меню **Скетч → Подключить библиотеку → OLED2.42_EASY**.
-
----
-
-### 3️⃣ Через Git
-
-**Linux / macOS:**
+### Способ 3: Через Git
 
 ```bash
 cd ~/Arduino/libraries/
+git clone https://github.com/klenov1900-lang/I2C_EASY.git
 git clone https://github.com/klenov1900-lang/OLED2.42_EASY.git
 ```
-
-**Windows (PowerShell / CMD):**
-
-```powershell
-cd "$env:USERPROFILE\Documents\Arduino\libraries"
-git clone https://github.com/klenov1900-lang/OLED2.42_EASY.git
-```
-
-После клонирования **перезапустите Arduino IDE** — библиотека появится в меню
-**Скетч → Подключить библиотеку → OLED2.42_EASY**.
-
-> 💡 Для обновления до последней версии достаточно выполнить `git pull` в папке библиотеки.
-
----
-
-### ✅ Как проверить, что всё установилось
-
-1. Откройте Arduino IDE.
-2. Перейдите в **Файл → Примеры → OLED2.42_EASY**.
-3. Должны быть видны три примера:
-   - `Clock_With_Labels`
-   - `FullDemo`
-   - `Text_SmallFont`
-4. Откройте любой из них и нажмите **Проверить/Компилировать**.
-5. Если компиляция прошла без ошибок — библиотека установлена корректно.
-
----
-
-### 🧪 Симуляция без железа
-
-Если у вас нет физического дисплея, библиотеку можно проверить в онлайн-симуляторе
-[**Wokwi**](https://wokwi.com/) — поддерживается Arduino Nano + SSD1309 (I2C).
-Пример `Text_SmallFont` успешно работает в симуляторе.
-
----
-
-## ✨ Особенности
-
-| Возможность | Описание |
-|---|---|
-| 🔌 **Прямая работа с TWI** | Без `Wire.h`, только регистры ATmega328P |
-| 💾 **Framebuffer** | 1024 байта (8 страниц по 128 байт) |
-| 🔤 **Terminus 8×12** | Кириллица + Unicode (227 символов) |
-| 🔢 **Blocky 15×23** | Цифры, знаки, `hPa`, `%`, `°C`, `U`, `A` |
-| 🌐 **Мультиязычность** | Заголовки (labels): русский, English, 中文 |
-| ⚡ **Частичное обновление** | `oledShowPage()` — только изменённые страницы |
-| 🎯 **`*Full` + `*Update`** | Координаты задаются один раз, обновление — без них |
-| ⏱️ **Timeout в TWI** | Не зависает при отвале дисплея |
-
----
-
-## 🔌 Подключение
-
-| OLED | Arduino Nano |
-|---|---|
-| **VCC** | 5V |
-| **GND** | GND |
-| **SCL** | A5 |
-| **SDA** | A4 |
-
-> ✅ На модуле **встроенный стабилизатор 5V → 3.3V**, поэтому питание от **5V** Arduino **безопасно**.
-
----
 
 ## 🚀 Быстрый старт
 
-```cpp
+```c
+#include <I2C_EASY.h>
 #include <OLED2.42_EASY.h>
 
 void setup() {
+    // 1. Инициализация I2C
+    i2c_init(400000);
+
+    // 2. Инициализация OLED
     oledBegin();
     oledClear();
 
-    oledTimeFull(12, 34, 56, 0, 0, 0, 16, 0);
+    // 3. Вывод текста (Terminus 8×12)
+    oledText("OLED 2.42\"", 0, 0);
+    oledText("SSD1309 I2C", 0, 1);
+
+    // 4. Вывод значения (Blocky 15×23)
+    oledTempFull(23.5, 0, 24, 0, 40, 0);   // 23.5 °C, русский
+
+    // 5. Отправка на дисплей
     oledShow();
 }
 
-void loop() {
-    static uint8_t hh = 12, mm = 34, ss = 56;
-    static uint32_t lastUpdate = 0;
-    static uint8_t firstRun = 1;
-
-    if (firstRun || (millis() - lastUpdate >= 1000)) {
-        lastUpdate = millis();
-        firstRun = 0;
-
-        if (++ss >= 60) {
-            ss = 0;
-            if (++mm >= 60) {
-                mm = 0;
-                if (++hh >= 24) hh = 0;
-            }
-        }
-
-        oledTimeUpdate(hh, mm, ss);
-    }
-}
+void loop() {}
 ```
 
----
+## 📖 Примеры
 
-## 📖 Три способа вывода значения
+| Пример | Описание | Зависимости |
+|---|---|---|
+| **Text_SmallFont** | Работа со шрифтом Terminus 8×12 | `OLED2.42_EASY` |
+| **FullDemo** | Демонстрация `*Full` + `*Update` | `OLED2.42_EASY` |
+| **Clock_With_Labels** | Часы с заголовками (ru/en/cn) | `OLED2.42_EASY` |
 
-### 1️⃣ Просто — фиксированные Y (`pos = 1/2`)
+## 📚 API
 
-```cpp
-oledTemp(23.5, 0, 1);   // Y = 8
-oledHumid(67, 0, 2);    // Y = 40
-oledShow();
-```
-
-| `pos` | Y |
-|---|---|
-| `1` | 8 |
-| `2` | 40 |
-
-### 2️⃣ Гибко — любая пиксельная Y
-
-```cpp
-oledTempXY(23.5, 0, 16);   // Y = 16
-oledHumidXY(67, 0, 40);    // Y = 40
-oledShow();
-```
-
-### 3️⃣ С заголовком — `*Full` запоминает координаты
-
-```cpp
-// Заголовок Y = 0, значение Y = 16, язык = 0 (рус)
-oledTempFull(23.5, 0, 0, 0, 16, 0);
-oledShow();
-
-// Обновление — БЕЗ координат
-oledTempUpdate(23.6);
-```
-
----
-
-## 🌐 Языки
-
-| Код | Язык |
-|---|---|
-| `0` | 🇷🇺 Русский |
-| `1` | 🇬🇧 English |
-| `2` | 🇨🇳 中文 |
-
-```cpp
-oledTempFull(23.5, 0, 0, 0, 16, 0);   // русский
-oledTempFull(23.5, 0, 0, 0, 16, 1);   // English
-oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
-```
-
----
-
-## 📋 Полный список функций
-
-### ⚙️ Инициализация
+### Инициализация
 
 | Функция | Описание |
 |---|---|
-| `oledBegin()` | Инициализация |
+| `oledBegin()` | Инициализация (адрес 0x3C) |
 | `oledBeginAddr(addr)` | Инициализация с другим адресом |
 
-### 🖥️ Управление дисплеем
+### Управление дисплеем
 
 | Функция | Описание |
 |---|---|
@@ -233,7 +146,7 @@ oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
 | `oledContrast(v)` | Контраст (0..255) |
 | `oledInvert(e)` | Инверсия (0/1) |
 
-### 💾 Framebuffer
+### Framebuffer
 
 | Функция | Описание |
 |---|---|
@@ -242,7 +155,7 @@ oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
 | `oledShow()` | Отправка всего буфера |
 | `oledShowPage(p)` | Отправка страницы 0..7 |
 
-### 🎨 Графика
+### Графика
 
 | Функция | Описание |
 |---|---|
@@ -255,7 +168,7 @@ oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
 | `oledBitmap(bmp, x, y, w, h)` | Битмап |
 | `oledInvertRect(x, y, w, h)` | Инверсия области |
 
-### ✍️ Текст
+### Текст
 
 | Функция | Описание |
 |---|---|
@@ -263,7 +176,7 @@ oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
 | `oledValue(str, x, pos)` | Blocky, pos = 1/2 |
 | `oledValueXY(str, x, y)` | Blocky, пиксельная Y |
 
-### 📊 Значения с единицами (`pos = 1/2`)
+### Значения с единицами (pos = 1/2)
 
 | Функция | Формат |
 |---|---|
@@ -275,7 +188,7 @@ oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
 | `oledTime(h, m, s, x, pos)` | `12:34:56` |
 | `oledDate(d, m, y, x, pos)` | `25.09.26` |
 
-### 📐 Значения с пиксельными координатами
+### Значения с пиксельными координатами
 
 | Функция | Формат |
 |---|---|
@@ -287,7 +200,7 @@ oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
 | `oledTimeXY(h, m, s, x, y)` | `12:34:56` |
 | `oledDateXY(d, m, y, x, y)` | `25.09.26` |
 
-### 🎯 Полные функции (`*Full`)
+### Полные функции (`*Full`)
 
 | Функция | Параметры |
 |---|---|
@@ -299,7 +212,7 @@ oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
 | `oledTimeFull(h, m, s, hx, hy, vx, vy, lang)` | 8 |
 | `oledDateFull(d, m, y, hx, hy, vx, vy, lang)` | 8 |
 
-### 🔄 UPDATE-функции (`*Update`)
+### UPDATE-функции (`*Update`)
 
 | Функция | Описание |
 |---|---|
@@ -311,7 +224,18 @@ oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
 | `oledTimeUpdate(h, m, s)` | Обновление времени |
 | `oledDateUpdate(d, m, y)` | Обновление даты |
 
----
+## 📊 Коды ошибок
+
+| Код | Константа | Описание |
+|---|---|---|
+| 0 | `I2C_OK` | Успех |
+| 1 | `I2C_ERR_TIMEOUT` | Таймаут ожидания TWINT |
+| 2 | `I2C_ERR_START` | Ошибка START |
+| 3 | `I2C_ERR_ADDR_NACK` | Устройство не ответило |
+| 4 | `I2C_ERR_DATA_NACK` | NACK на данные |
+| 5 | `I2C_ERR_BUS` | Ошибка состояния шины |
+| 6 | `I2C_ERR_ARB_LOST` | Потеря арбитража |
+| 7 | `I2C_ERR_BUS_LOCKED` | SDA удерживается низко |
 
 ## 🔤 Шрифты
 
@@ -320,16 +244,12 @@ oledTempFull(23.5, 0, 0, 0, 16, 2);   // 中文
 | 🔤 **Terminus 8×12** | 8×12 | Текст, заголовки | ✅ |
 | 🔢 **Blocky 15×23** | 15×23 | Значения (цифры) | ❌ |
 
----
-
 ## 💾 Потребление ресурсов
 
 | Ресурс | Занято | Свободно |
 |---|---|---|
 | ⚡ **Flash** | ~7.8 КБ (25%) | ~23 КБ |
 | 💾 **ОЗУ** | ~1.1 КБ (52%) | ~0.9 КБ |
-
----
 
 ## 📂 Структура
 
@@ -353,31 +273,41 @@ OLED2.42_EASY/
 ├── library.properties
 ├── keywords.txt
 ├── README.md
+├── README_CN.md
 └── LICENSE
 ```
 
----
+## 📝 История версий
 
-## 📜 Лицензия
+| Версия | Дата | Изменения |
+|---|---|---|
+| **v2.0.0** | 2026-10-16 | Переход на `I2C_EASY`. Убрана зависимость от `util/twi.h`. |
+| v1.0.1 | 2026-10-05 | Добавлены примеры и демонстрация. |
+| v1.0.0 | 2026-10-04 | Первый релиз. |
 
-**MIT** — свободно для коммерческого и некоммерческого использования.
+## 📄 Лицензия
 
----
+MIT License. См. [LICENSE](LICENSE).
 
 ## 🙏 Credits
 
-### 🔢 Blocky 15×23
+| Компонент | Автор | Лицензия |
+|---|---|---|
+| **Blocky 15×23** | klenov1900-lang | MIT |
+| **中文 заголовки** (`labels.h`) | klenov1900-lang | MIT |
+| **Terminus 8×12** (адаптирован) | klenov1900-lang | MIT |
+| *Оригинальный Terminus* | Dimitar Zhekov | SIL OFL 1.1 |
 
-**Автор:** klenov1900-lang
-**Лицензия:** MIT
+> **Примечание:** Шрифт Terminus 8×12 был дважды обработан скриптами Python
+> (конвертация и оптимизация таблицы глифов). Итоговый шрифт сохраняет стиль
+> и геометрию Terminus, но представляет собой адаптированную версию,
+> подготовленную автором данной библиотеки.
 
-### 🈶 中文 заголовки (`labels.h`)
+## 📧 Контакты
 
-**Автор:** klenov1900-lang
-**Лицензия:** MIT
+- **Email:** gray_wolf19@mail.ru
+- **GitHub:** [klenov1900-lang](https://github.com/klenov1900-lang)
 
-### 🔤 Terminus 8×12
+---
 
-**Автор:** Dimitar Zhekov
-**Лицензия:** SIL Open Font License 1.1
-**Источник:** files.ax86.net/terminus-ttf
+⭐ Если библиотека вам полезна, поставьте звезду на GitHub! ⭐
